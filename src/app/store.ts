@@ -1,17 +1,22 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { combineReducers, createStore } from '@reduxjs/toolkit';
+import { orderBookReducer } from '../features/orderbook/orderBookReducer';
+import { OrderBookState } from '../features/orderbook/orderBookTypes';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { initialState as orderBookIntState } from '../features/orderbook/orderBookReducer';
 
-export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-  },
-});
+const initialState = {
+  orderbook: orderBookIntState,
+}
+
+export type ReduxState = {
+  orderbook: OrderBookState;
+}
+
+export const rootReducer = combineReducers({
+  orderbook: orderBookReducer,
+})
+
+export const store = createStore(rootReducer, initialState, composeWithDevTools())
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  unknown,
-  Action<string>
->;
