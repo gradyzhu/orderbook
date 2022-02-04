@@ -30,7 +30,6 @@ let asksBatch: number[][] = [];
 let bidsBatch: number[][] = [];
 
 export const OrderBook = () => {
-  const [socket, setSocket] = useState<WebSocket>();
   const [isPaused, setIsPaused] = useState(false);
   const [pair, setPair] = useState<Pairings>(Pairings.BTC_USD);
   const status = useSelector(orderBookStatusSelector);
@@ -56,10 +55,9 @@ export const OrderBook = () => {
 
   useEffect(() => {
     dispatch(clearOrderBook());
-    const s = new WebSocket(WebSockets.CRYPTO_FACILITIES);
-    setSocket(s);
-    s.onopen = () => subscribe(s, Pairings.BTC_USD);
-    s.onmessage = (payload) => {
+    window.socket = new WebSocket(WebSockets.CRYPTO_FACILITIES);
+    window.socket.onopen = () => subscribe(window.socket, Pairings.BTC_USD);
+    window.socket.onmessage = (payload) => {
       const data = JSON.parse(payload.data);
       if (data.event) return; // handle this
       const { asks, bids } = data;
@@ -69,7 +67,7 @@ export const OrderBook = () => {
     };
 
     const disconnectWS = () => {
-      s.close();
+      window.socket.close();
       setIsPaused(true);
     }
 
@@ -92,15 +90,13 @@ export const OrderBook = () => {
   }
 
   const handleToggleFeed = () => {
-    if (!socket) return;
-
     const nextPair = pair === Pairings.BTC_USD 
       ? Pairings.ETH_USD
       : Pairings.BTC_USD;
 
-    unsubscribe(socket, pair);
+    unsubscribe(window.socket, pair);
 
-    socket.onmessage = (payload) => {
+    window.socket.onmessage = (payload) => {
       const { event } = JSON.parse(payload.data);
       if (event === 'unsubscribed') {
         dispatch(clearOrderBook());
@@ -108,9 +104,9 @@ export const OrderBook = () => {
         asksBatch = [];
         bidsBatch = [];
 
-        subscribe(socket, nextPair)
+        subscribe(window.socket, nextPair)
 
-        socket.onmessage = handleOrderbookState;
+        window.socket.onmessage = handleOrderbookState;
         setPair(nextPair);
       }
     }
@@ -123,9 +119,9 @@ export const OrderBook = () => {
 
   const handleResume = () => {
     dispatch(clearOrderBook());
-    const s = new WebSocket(WebSockets.CRYPTO_FACILITIES);
-    s.onopen = () => subscribe(s, pair);
-    s.onmessage = handleOrderbookState;
+    window.socket = new WebSocket(WebSockets.CRYPTO_FACILITIES);
+    window.socket.onopen = () => subscribe(window.socket, pair);
+    window.socket.onmessage = handleOrderbookState;
     setIsPaused(false);
   }
 
