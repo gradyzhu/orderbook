@@ -22,4 +22,4 @@ export enum Colors {
   DIM = 'rgba(0, 0, 0, 0.75)',
 }
 
-export const BATCH_LIMIT = 1000;
+export const BATCH_LIMIT = 600;
