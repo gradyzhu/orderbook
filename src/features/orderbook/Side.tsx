@@ -45,6 +45,7 @@ export const Side = ({
       <tr
         key={`${side}-${price}-level`}
         style={{
+          display: 'flex',
           height: '18px',
           backgroundImage: `linear-gradient(
             ${isAsksSide || isMobile ? 'to right' :'to left'},
@@ -100,6 +101,7 @@ const Td = styled.td<{
   color: ${props => props.color || Colors.OFF_WHITE};
   font-family: 'Courier', Courier;
   font-weight: bold;
-  padding: 0px 30px;
+  padding: 0px 20px;
   text-align: right;
+  width: 33%;
 `;

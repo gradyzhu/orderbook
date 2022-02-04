@@ -39,5 +39,5 @@ const Td = styled.td`
   text-align: right;
   text-transform: uppercase;
   border-bottom: 1px solid ${Colors.LIGHT_GRAY};
-  padding: 5px 30px;
+  padding: 5px 20px;
 `
